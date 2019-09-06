@@ -51,8 +51,8 @@ class Login extends React.Component
                 this.setState({message:res.data})
             }
             else{
-
-                localStorage.setItem("token",res.data.token) 
+                localStorage.setItem("token",res.data.token)
+                localStorage.setItem("loginid",res.data.loginid) 
                 if(res.data.token){
                     this.props.history.push('/timeline')
                 }

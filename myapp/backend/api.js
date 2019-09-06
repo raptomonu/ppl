@@ -57,7 +57,8 @@ module.exports={
 
                         
                         var token=jwt.sign({result},'monukumar')
-                        res(token)
+                        // console.log("this is token when created",result)
+                        res([token,result._id])
                     }
                     else{
                         res({message:"Wrong password!!!!!!!!!!"})
@@ -100,6 +101,19 @@ module.exports={
                     console.log(result)
                     res(result)
                 }
+            })
+            
+        })
+    },
+    commentdata:(data)=>{
+        return new Promise((res,rej)=>{
+            // console.log(data)
+            userSchema.findOne({_id:data.id},{username:1,_id:0}).then((result)=>{
+                console.log(data.text)
+                imageSchema.updateOne({_id:data.imageid},{$push:{comment:{username:result.username,text:data.text}}}).then((final)=>{
+                    res(final)
+                })
+
             })
             
         })

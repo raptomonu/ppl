@@ -19,13 +19,16 @@ class Timeline extends React.Component {
       imagecollection: [],
       categorycollection:[],
       img:"",
-      data:""
+      data:"",
+      like:"",
+      loginid:"",
+      
 
 
     }
   }
 
-  componentWillMount=()=>{
+  componentDidMount=()=>{
     this.verifytoken();
     this.getDataPost();
     this.getDataCategory();
@@ -37,7 +40,7 @@ class Timeline extends React.Component {
   getDataPost=()=>{
     Axios.post("http://localhost:8080/postload").then((res)=>{
       this.setState({imagecollection:res.data})
-      console.log(res.data)
+      // console.log(res.data)
     })
   }
   
@@ -63,7 +66,8 @@ class Timeline extends React.Component {
             this.props.history.push('/login')
         }
         else if(res.data.done===true){
-          this.setState({username:res.data.name})
+          console.log("when verified token then res data",res.data)
+          this.setState({username:res.data.name,loginid:res.data.id})
           this.props.history.push('/timeline')
         }
            
@@ -71,7 +75,21 @@ class Timeline extends React.Component {
         })
   }
 
+// like button
 
+  like=(e)=>{
+    e.preventDefault()
+  console.log("when like button clicked",e.target.name,this.state.loginid)  
+  Axios.post('http://localhost:8080/like',{postid:e.target.name,id:this.state.loginid})
+  .then((res)=>{
+    console.log("liked status",res.data)
+    this.getDataPost();
+    this.setState({like:res.data.likecount})
+    
+  })
+
+
+  }
   //toggle for upload post  
   
   toggle = () => {
@@ -199,9 +217,9 @@ class Timeline extends React.Component {
 
                     )}
                   </Dropzone>
-                  <select name="category" id="category" value="Select"  onChange={this.handleonchange}>
+                  <select name="category" id="category"  onChange={this.handleonchange}>
                     
-                  <option selected hidden>Choose here category</option>
+                  <option selected hidden >Choose here category</option>
                     
                     {/* dropdown */}
                     
@@ -259,6 +277,8 @@ class Timeline extends React.Component {
 
             {/* end  of   category */}
 
+
+            {/*category list here */}
 
             <div className="rght_cate">
               <div className="rght_cate_hd" id="rght_cat_bg">Categories</div>
@@ -347,16 +367,20 @@ class Timeline extends React.Component {
                   <div className="div_top_lft"><img src="images/img_6.png" />{item.username}</div>
                   <div className="div_top_rgt"><span className="span_date">{item.date}</span><span className="span_time">{item.time}</span></div>
                 </div>
-                <Link to={'/singlepost/' + item._id}>
+                <Link to={{pathname:'/singlepost/'+ item._id}}>
                 <div className="div_image"><img src={"http://localhost:8080/" + (item.imagename)} alt={this.state.data}/></div>
                 </Link>
                 <div className="div_btm">
-                  <div className="btm_list">
+                  <div className="btm_list" >
                     <ul>
-                      <li><a href="#"><span className="btn_icon"><img src="images/icon_001.png" alt="share" /></span>Share</a></li>
-                      <li><a href="#"><span className="btn_icon"><img src="images/icon_002.png" alt="share" /></span>Flag</a></li>
-                      <li><a href="#"><span className="btn_icon"><img src="images/icon_003.png" alt="share" /></span>0 Likes</a></li>
-                      <li><a href="#"><span className="btn_icon"><img src="images/icon_004.png" alt="share" /></span>4 Comments</a></li>
+                    
+                      <li  ><a href="#" ><span className="btn_icon" ><img src="images/icon_001.png" alt="share" /></span>Share</a></li>
+                      <li><a href="#" ><span className="btn_icon"><img src="images/icon_002.png" alt="share" /></span>Flag</a></li>
+                      {/* like button  */}
+                       <li><a href="#" onClick={this.like} name={item._id}><span className="btn_icon"><img src="images/icon_003.png" alt="share" /></span>{item.likedby.length}Like</a></li>
+                   
+
+                      <li><a href="#"><span className="btn_icon"><img src="images/icon_004.png" alt="share" /></span>{item.comment.length} Comments</a></li>
                     </ul>
                   </div>
                 </div>

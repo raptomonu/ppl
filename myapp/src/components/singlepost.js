@@ -7,19 +7,41 @@ class SinglePost extends React.Component{
     // console.log(this.props.match.params)
     this.state=({
       id:this.props.match.params,
-      singleimagedetail:""
+      singleimagedetail:"",
+      like:"",
+      comment:"",
+      commentlist:[],
+      loginid:localStorage.getItem("loginid")
     })
   }
-  componentWillMount(){
+  
+  componentDidMount(){
     this.getdata()
   }
 
   getdata=()=>{
-    console.log(this.state.id)
+    console.log("login id ",this.state.loginid)
     Axios.post('http://localhost:8080/singlepost',this.state.id).then((res)=>{
-      // console.log(res.data)
-      this.setState({singleimagedetail:res.data})
-      console.log(this.state.singleimagedetail)
+      console.log("single post on load data",res.data)
+      this.setState({singleimagedetail:res.data,
+                      like:res.data.likedby.length,
+                    commentlist:res.data.comment,
+                  })
+      console.log("this is single post comment status",this.state.commentlist)
+    })
+  }
+
+
+  handleonchange=(e)=>{
+    this.setState({comment:e.target.value})
+  }
+
+  handleonsubmit=(e)=>{
+    e.preventDefault();
+    // console.log(this.state)
+    Axios.post('http://localhost:8080/commentupload',this.state).then((res)=>{
+      console.log(res.data)
+      this.getdata()
     })
   }
 
@@ -63,8 +85,8 @@ class SinglePost extends React.Component{
                       <ul>
                         <li><a href="#"><span className="btn_icon"><img src="/images/icon_001.png" alt="share" /></span>Share</a></li>
                         <li><a href="#"><span className="btn_icon"><img src="/images/icon_002.png" alt="share" /></span>Flag</a></li>
-                        <li><a href="#"><span className="btn_icon"><img src="/images/icon_003.png" alt="share" /></span>0 Likes</a></li>
-                        <li><a href="#"><span className="btn_icon"><img src="/images/icon_004.png" alt="share" /></span>4 Comments</a></li>
+                        <li><a href="#"><span className="btn_icon"><img src="/images/icon_003.png" alt="share" /></span>{this.state.like}Likes</a></li>
+                        <li><a href="#"><span className="btn_icon"><img src="/images/icon_004.png" alt="share" /></span>{this.state.commentlist.length} Comments</a></li>
                       </ul>
                     </div>
                   </div>
@@ -72,48 +94,31 @@ class SinglePost extends React.Component{
               </div>
               <div className="contnt_3">
                 <ul>
+                  
+              {this.state.commentlist.map((item)=>
                   <li>
+                    
+                <div>
                     <div className="list_image">
                       <div className="image_sec"><img src="/images/post_img.png" /></div>
-                      <div className="image_name">Bharat</div>
+                      <div className="image_name">{item.username}</div>
                     </div>
                     <div className="list_info">
-                      This is an example of a comment. You can create as many comments like this one or sub
-                      comments as you like and manage all of your content inside your Account.
-                    </div>
-                    <input type="button" defaultValue="Reply" className="orng_btn" />
+                     {item.text}
+                      </div>
+                      </div>
+                    
                   </li>
-                  <li>
-                    <div className="list_image">
-                      <div className="image_sec"><img src="/images/post_img.png" /></div>
-                      <div className="image_name">Bharat</div>
-                    </div>
-                    <div className="list_info">
-                      This is an example of a comment. You can create as many comments like this one or sub
-                      comments as you like and manage all of your content inside your Account.
-                    </div>
-                    <input type="button" defaultValue="Reply" className="black_btn" />
-                    <div className="cmnt_div">
-                      <input type="text" defaultValue="Add a Comment" className="cmnt_bx" />
-                      <input type="submit" className="sub_bttn" defaultValue="Submit Comment" />
-                    </div>
-                  </li>
-                  <li>
-                    <div className="list_image">
-                      <div className="image_sec"><img src="/images/post_img.png" /></div>
-                      <div className="image_name">Bharat</div>
-                    </div>
-                    <div className="list_info">
-                      This is an example of a comment. You can create as many comments like this one or sub
-                      comments as you like and manage all of your content inside your Account.
-                    </div>
-                    <input type="button" defaultValue="Reply" className="orng_btn" />
-                  </li>
+                    )}
+
                   <li>
                     <div className="cmnt_div1">
-                      <input type="text" defaultValue="Enter your Comment" className="cmnt_bx1" />
+                      <form onSubmit={this.handleonsubmit}>
+
+                      <input onChange={this.handleonchange} type="text" placeholder="Type your comment" className="cmnt_bx1" />
                       <input type="submit" className="sub_bttn1" defaultValue="Submit Comment" />
-                    </div>
+                    </form>
+                      </div>
                   </li>
                 </ul>
                 <div className="view_div"><a href="#">View more</a></div>

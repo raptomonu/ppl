@@ -5,19 +5,71 @@ const jwt = require('jsonwebtoken')
 const imageSchema=require('./schema/imageschema')
 const categorySchema=require('./schema/categoryschema')
 const decode =require('jwt-decode')
+
+
+router.post('/commentupload',async (req,res)=>{
+        console.log(req.body.singleimagedetail._id);
+        comment={
+                
+                text:req.body.comment,
+                id:req.body.loginid,
+                imageid:req.body.singleimagedetail._id
+        }
+        const commentdata=await userApi.commentdata(comment)
+        res.send(commentdata)
+})
+
+
+router.post('/like',(req,res)=>{
+        imageSchema.findOne({$and:[{_id:req.body.postid},{likedby:{$in:[req.body.id]}}]})
+        .then((data)=>{
+                // console.log("data check when like",data)
+        if(data!=null){
+                imageSchema.updateOne({_id:req.body.postid},{$pull:{likedby:{$in:req.body.id}}})
+                .then((data)=>{
+                        console.log("unlike",data)
+                        
+                })
+        }
+        else{
+                imageSchema.updateOne({_id:req.body.postid},{$push:{likedby:{$each:[req.body.id]}}})
+                .then((data)=>{
+                        console.log("like",data)
+                        
+                }).catch((err)=>{
+                        console.log("inser>>>>>>>>>>>>>>>>.",err.stack)
+                })
+        }
+                
+        })
+        .catch((err)=>{
+                console.log("errrrrorrrr of main like",err.stack)
+        })
+
+
+        imageSchema.findOne({_id:req.body.postid})
+        .then((data)=>{
+                res.send({likecount:data.likedby.length})
+        })
+        
+})
+
+
+
+
 router.post('/verifytoken',verifyToken,(req,res)=>{
         
         // console.log("token in router>>>>>>>>>>>>",req.headers) 
         jwt.verify(req.token,'monukumar',(err,authData)=>{
                 if(err){
-                        console.log("errr")
+                        console.log("errrrrrrrrrorrrrrrrrrrrr")
                         // console.log(err.stack)
                         res.send(err)
                 }
                 else{
                         // console.log("Authorized data >>>>>>>>>>>>>>>>>>>>>>>>",authData)
                        console.log("token verified") 
-                        res.json({done:true,name:authData.result.username})
+                        res.json({done:true,name:authData.result.username,id:authData.result._id})
                        
                 }
 
@@ -28,7 +80,7 @@ router.post('/verifytoken',verifyToken,(req,res)=>{
 function verifyToken(req,res,next){
        
         const bearerHeader = req.headers['authorization'];
-        console.log("thsi is auth",bearerHeader)
+        // console.log("thsi is auth",bearerHeader)
 
   if(typeof bearerHeader !== 'undefined') {
     const bearer = bearerHeader.split(' ');
@@ -79,14 +131,14 @@ router.post('/signup',async (req,res)=>{
 
 router.post('/login',async (req,res)=>{
         let checklogin=await userApi.userlogin(req.body.mail,req.body.password)
-        console.log("router result",checklogin)
+        // console.log("router result",checklogin)
         // res.send(checklogin.message)
         if(checklogin.message){
                 res.send(checklogin.message)
         }
         else{
-
-                res.json({token:checklogin})
+                console.log("login time data???????>>>>>>>>>>>>>>>>",checklogin)
+                res.json({token:checklogin[0],loginid:checklogin[1]})
         }
         
 
