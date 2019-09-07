@@ -37,7 +37,7 @@ class Header extends React.Component{
         </div>
         <div className="header">
           <div className="header_lft">
-           <Link to='/timeline'> <div className="logo" ><a href="#"><img src="/images/logo.png" /></a></div>
+           <Link to='/'> <div className="logo" ><a href="#"><img src="/images/logo.png" /></a></div>
             </Link><div className="navigatn">
               <ul>
                 <li><a href="#" className="active">Home</a></li>

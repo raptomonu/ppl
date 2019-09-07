@@ -75,6 +75,19 @@ class Timeline extends React.Component {
         })
   }
 
+  //show by category
+  
+  displaybycategory=(e)=>{
+    e.preventDefault();
+    console.log("this is category",e.currentTarget.id)
+    Axios.post('http://localhost:8080/displaybycategory',{name:e.currentTarget.id})
+    .then((res)=>{
+      this.setState({imagecollection:res.data})
+
+    })
+  }
+
+
 // like button
 
   like=(e)=>{
@@ -220,7 +233,7 @@ class Timeline extends React.Component {
                   </Dropzone>
                   <select name="category" id="category"  onChange={this.handleonchange}>
                     
-                  {/* <option defaultValue >Choose here category</option> */}
+                  <option defaultValue >Choose here category</option>
                     
                     {/* dropdown */}
                     
@@ -287,7 +300,9 @@ class Timeline extends React.Component {
                 <ul>
                   <div>
                   {(this.state.categorycollection).map((item)=>
+                  <div onClick={this.displaybycategory} id={item.categoryname}>
                   <li><a href="#"><span className="list_icon"><img src={"http://localhost:8080/" + (item.imagename)} alt="up" /></span> {item.categoryname}</a></li>
+                  </div>
                   )}
                   </div>
 

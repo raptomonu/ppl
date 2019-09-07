@@ -19,6 +19,14 @@ router.post('/commentupload',async (req,res)=>{
         res.send(commentdata)
 })
 
+router.post('/displaybycategory',(req,res)=>{
+        console.log(req.body.name)
+        imageSchema.find({category:req.body.name})
+        .then((result)=>{
+                res.send(result)
+        })
+})
+
 
 router.post('/like',(req,res)=>{
         console.log(req.body)
