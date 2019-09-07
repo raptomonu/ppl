@@ -21,7 +21,7 @@ class Timeline extends React.Component {
       img:"",
       data:"",
       like:"",
-      loginid:"",
+      loginid:""
       
 
 
@@ -79,8 +79,8 @@ class Timeline extends React.Component {
 
   like=(e)=>{
     e.preventDefault()
-  console.log("when like button clicked",e.target.name,this.state.loginid)  
-  Axios.post('http://localhost:8080/like',{postid:e.target.name,id:this.state.loginid})
+  console.log("when like button clicked",e.currentTarget.id,this.state.loginid)  
+  Axios.post('http://localhost:8080/like',{postid:e.currentTarget.id,id:this.state.loginid})
   .then((res)=>{
     console.log("liked status",res.data)
     this.getDataPost();
@@ -184,6 +184,7 @@ class Timeline extends React.Component {
 
   logout=()=>{
     localStorage.removeItem("token");
+    localStorage.removeItem("loginid");
     this.props.history.push('/login')
 
   }
@@ -219,7 +220,7 @@ class Timeline extends React.Component {
                   </Dropzone>
                   <select name="category" id="category"  onChange={this.handleonchange}>
                     
-                  <option selected hidden >Choose here category</option>
+                  {/* <option defaultValue >Choose here category</option> */}
                     
                     {/* dropdown */}
                     
@@ -377,7 +378,7 @@ class Timeline extends React.Component {
                       <li  ><a href="#" ><span className="btn_icon" ><img src="images/icon_001.png" alt="share" /></span>Share</a></li>
                       <li><a href="#" ><span className="btn_icon"><img src="images/icon_002.png" alt="share" /></span>Flag</a></li>
                       {/* like button  */}
-                       <li><a href="#" onClick={this.like} name={item._id}><span className="btn_icon"><img src="images/icon_003.png" alt="share" /></span>{item.likedby.length}Like</a></li>
+                       <li><a href="#" onClick={this.like} id={item._id}><span className="btn_icon"><img src="images/icon_003.png" alt="share" /></span>{item.likedby.length}Like</a></li>
                    
 
                       <li><a href="#"><span className="btn_icon"><img src="images/icon_004.png" alt="share" /></span>{item.comment.length} Comments</a></li>

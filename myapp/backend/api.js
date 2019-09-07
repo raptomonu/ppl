@@ -76,11 +76,12 @@ module.exports={
 
     },
     imagedetail:(data)=>{
-        console.log("this is api here",data)
+        // console.log("this is imagedetail api here",data)
         return new Promise((res,rej)=>{
             imageSchema.create(data ,(err,result)=>{
-                
+                console.log(result)
                 if(err){
+                    console.log("error in image detail api?>>>>>>>")
                     rej(err)
                 }
                 else{

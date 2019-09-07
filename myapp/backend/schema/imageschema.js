@@ -7,7 +7,7 @@ date:{type:String},
 time:{type:String},
 id:{type:String},
 username:{type:String},
-likedby:{type:Array},
+likedby:{type:Array,unique:false},
 comment:{type:Array}
 
 })
