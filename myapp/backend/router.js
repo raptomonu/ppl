@@ -29,10 +29,10 @@ router.post('/displaybycategory',(req,res)=>{
 
 
 router.post('/like',(req,res)=>{
-        console.log(req.body)
+        // console.log(req.body)
         imageSchema.findOne({$and:[{_id:req.body.postid},{likedby:{$in:[req.body.id]}}]})
         .then((data)=>{
-                console.log("data check when like",data)
+                // console.log("data check when like",data)
         if(data!=null){
                 imageSchema.updateOne({_id:req.body.postid},{$pull:{likedby:{$in:[req.body.id]}}})
                 .then((data)=>{
@@ -46,7 +46,7 @@ router.post('/like',(req,res)=>{
                 imageSchema.updateOne({_id:req.body.postid},{$push:{likedby:req.body.id}})
                 .then((data)=>{
 
-                        console.log("like",req.body.id,data)
+                        console.log("like",data)
                         
                 }).catch((err)=>{
                         console.log("inser>>>>>>>>>>>>>>>>.",err.stack)
